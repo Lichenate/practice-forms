@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Form Filling Practice</title>
+<style>
+  :root{
+    --navy:#1b3a5c;
+    --navy-dark:#122943;
+    --accent:#2f7f5f;
+    --accent-dark:#245f47;
+    --paper:#ffffff;
+    --bg:#eef2f6;
+    --border:#c7d2dc;
+    --text:#22303c;
+    --muted:#5a6b7a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:var(--bg);
+    margin:0;
+    padding:24px;
+    color:var(--text);
+  }
+  h1{
+    text-align:center;
+    color:var(--navy-dark);
+    margin-bottom:4px;
+  }
+  p.subtitle{
+    text-align:center;
+    color:var(--muted);
+    margin-top:0;
+    margin-bottom:24px;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+  }
+  .tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-bottom:0;
+  }
+  .tab-btn{
+    flex:1 1 auto;
+    min-width:120px;
+    padding:12px 10px;
+    background:#dbe3ea;
+    border:1px solid var(--border);
+    border-bottom:none;
+    border-radius:8px 8px 0 0;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+    color:var(--navy-dark);
+    text-align:center;
+  }
+  .tab-btn.active{
+    background:var(--paper);
+    color:var(--navy);
+    border-color:var(--navy);
+  }
+  .tab-btn:hover{
+    background:#c9d5e0;
+  }
+  .tab-btn.active:hover{
+    background:var(--paper);
+  }
+  .panel{
+    display:none;
+    background:var(--paper);
+    border:1px solid var(--navy);
+    border-radius:0 0 10px 10px;
+    padding:28px;
+  }
+  .panel.active{
+    display:block;
+  }
+  .form-title{
+    margin-top:0;
+    color:var(--navy-dark);
+    border-bottom:2px solid var(--accent);
+    padding-bottom:8px;
+  }
+  .field{
+    margin-bottom:16px;
+  }
+  label{
+    display:block;
+    font-weight:600;
+    margin-bottom:5px;
+    font-size:14px;
+  }
+  input[type=text],
+  input[type=email],
+  input[type=tel],
+  input[type=date],
+  input[type=time],
+  input[type=number],
+  select,
+  textarea{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    font-size:14px;
+    font-family:inherit;
+    background:#fbfcfd;
+  }
+  textarea{
+    resize:vertical;
+    min-height:70px;
+  }
+  fieldset{
+    border:1px solid var(--border);
+    border-radius:6px;
+    margin-bottom:16px;
+    padding:10px 14px;
+  }
+  legend{
+    font-weight:600;
+    font-size:14px;
+    padding:0 6px;
+  }
+  .radio-row, .checkbox-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:6px 0;
+    font-size:14px;
+    font-weight:normal;
+  }
+  .radio-row label, .checkbox-row label{
+    font-weight:normal;
+    margin:0;
+    display:inline;
+  }
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 16px;
+  }
+  @media (max-width:560px){
+    .two-col{grid-template-columns:1fr;}
+  }
+  .scale-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  .scale-table th, .scale-table td{
+    text-align:center;
+    padding:6px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .scale-table td:first-child{
+    text-align:left;
+  }
+  .stepper{
+    display:inline-flex;
+    align-items:center;
+  }
+  .stepper-btn{
+    width:34px;
+    height:34px;
+    border:1px solid var(--border);
+    background:#dbe3ea;
+    font-size:18px;
+    font-weight:700;
+    line-height:1;
+    cursor:pointer;
+    color:var(--navy-dark);
+  }
+  .stepper-btn:hover{
+    background:#c9d5e0;
+  }
+  .stepper-btn:first-child{
+    border-radius:6px 0 0 6px;
+  }
+  .stepper-btn:last-child{
+    border-radius:0 6px 6px 0;
+  }
+  .stepper input[type=number]{
+    width:48px;
+    height:34px;
+    text-align:center;
+    border-left:none;
+    border-right:none;
+    border-radius:0;
+    padding:0;
+    -moz-appearance:textfield;
+  }
+  .stepper input[type=number]::-webkit-inner-spin-button,
+  .stepper input[type=number]::-webkit-outer-spin-button{
+    -webkit-appearance:none;
+    margin:0;
+  }
+  .action-bar{
+    margin-top:24px;
+    padding-top:18px;
+    border-top:1px dashed var(--border);
+  }
+  .section-divider{
+    border:none;
+    border-top:2px solid var(--accent);
+    margin:0 0 16px 0;
+  }
+  .email-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .email-row input{
+    flex:1 1 220px;
+  }
+  .btn{
+    padding:10px 18px;
+    border:none;
+    border-radius:6px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .btn-print{
+    background:var(--navy);
+    color:#fff;
+  }
+  .btn-print:hover{
+    background:var(--navy-dark);
+  }
+  .btn-email{
+    background:var(--accent);
+    color:#fff;
+  }
+  .btn-email:hover{
+    background:var(--accent-dark);
+  }
+  .btn-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .note{
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:10px;
+    line-height:1.5;
+  }
+  .required{
+    color:#b23b3b;
+  }
+
+  /* PRINT RULES: only the currently active panel prints, cleanly */
+  @media print{
+    body{background:#fff;padding:0;}
+    .tabs, .action-bar, h1, p.subtitle{display:none !important;}
+    .wrap{max-width:100%;}
+    .panel{display:none !important;border:none;padding:0;}
+    .panel.printing{display:block !important;}
+  }
+</style>
+</head>
+<body>
+
+<h1>Form Filling Practice</h1>
+<p class="subtitle">Complete each form as instructed by your teacher, then print it or email it in.</p>
+
+<div class="wrap">
+
+  <div class="tabs" id="tabBar">
+    <div class="tab-btn active" data-tab="gym">Gym Membership</div>
+    <div class="tab-btn" data-tab="library">Library Membership</div>
+    <div class="tab-btn" data-tab="computer">Computer Booking</div>
+    <div class="tab-btn" data-tab="festival">Festival of Lights</div>
+    <div class="tab-btn" data-tab="survey">Class Survey</div>
+  </div>
+
+  <!-- ============ GYM MEMBERSHIP ============ -->
+  <div class="panel active" id="panel-gym" data-name="Gym Membership Application">
+    <h2 class="form-title">Gym Membership Application</h2>
+    <form>
+      <div class="two-col">
+        <div class="field">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" required>
+        </div>
+        <div class="field">
+          <label>Date of Birth</label>
+          <input type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label>Street Address</label>
+        <input type="text">
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Suburb</label>
+          <input type="text">
+        </div>
+        <div class="field">
+          <label>Postcode</label>
+          <input type="text">
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel">
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email">
+        </div>
+      </div>
+      <fieldset>
+        <legend>Membership Type</legend>
+        <div class="radio-row"><input type="radio" name="gymtype" id="gt1"><label for="gt1">Standard (gym floor only)</label></div>
+        <div class="radio-row"><input type="radio" name="gymtype" id="gt2"><label for="gt2">Premium (gym + classes + pool)</label></div>
+        <div class="radio-row"><input type="radio" name="gymtype" id="gt3"><label for="gt3">Student (with valid ID)</label></div>
+      </fieldset>
+      <fieldset>
+        <legend>Preferred Contract Length</legend>
+        <div class="radio-row"><input type="radio" name="gymlength" id="gl1"><label for="gl1">1 month</label></div>
+        <div class="radio-row"><input type="radio" name="gymlength" id="gl2"><label for="gl2">6 months</label></div>
+        <div class="radio-row"><input type="radio" name="gymlength" id="gl3"><label for="gl3">12 months</label></div>
+      </fieldset>
+      <div class="field">
+        <label>Emergency Contact Name &amp; Phone</label>
+        <input type="text">
+      </div>
+      <div class="field">
+        <label>Any medical conditions we should know about?</label>
+        <textarea></textarea>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="gymterms">
+        <label for="gymterms">I agree to the gym's terms and conditions</label>
+      </div>
+    </form>
+    <div class="action-bar"></div>
+  </div>
+
+  <!-- ============ LIBRARY MEMBERSHIP ============ -->
+  <div class="panel" id="panel-library" data-name="Library Membership Application">
+    <h2 class="form-title">Library Membership Application</h2>
+    <form>
+      <div class="two-col">
+        <div class="field">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" required>
+        </div>
+        <div class="field">
+          <label>Date of Birth</label>
+          <input type="date">
+        </div>
+      </div>
+      <div class="field">
+        <label>Street Address</label>
+        <input type="text">
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Suburb</label>
+          <input type="text">
+        </div>
+        <div class="field">
+          <label>Postcode</label>
+          <input type="text">
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel">
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email">
+        </div>
+      </div>
+      <fieldset>
+        <legend>Type of Card</legend>
+        <div class="radio-row"><input type="radio" name="libtype" id="lt1"><label for="lt1">Adult</label></div>
+        <div class="radio-row"><input type="radio" name="libtype" id="lt2"><label for="lt2">Student</label></div>
+        <div class="radio-row"><input type="radio" name="libtype" id="lt3"><label for="lt3">Child (parent/guardian signature required)</label></div>
+      </fieldset>
+      <div class="field">
+        <label>Proof of Address Provided?</label>
+        <select>
+          <option value="">-- Select --</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+      </div>
+      <fieldset>
+        <legend>Areas of Interest (tick all that apply)</legend>
+        <div class="checkbox-row"><input type="checkbox" id="li1"><label for="li1">Fiction</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="li2"><label for="li2">Non-fiction / research</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="li3"><label for="li3">Children's books</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="li4"><label for="li4">Audiobooks &amp; eBooks</label></div>
+        <div class="checkbox-row"><input type="checkbox" id="li5"><label for="li5">Newspapers &amp; magazines</label></div>
+      </fieldset>
+      <div class="checkbox-row">
+        <input type="checkbox" id="libterms">
+        <label for="libterms">I agree to return items on time and pay any late fees</label>
+      </div>
+    </form>
+    <div class="action-bar"></div>
+  </div>
+
+  <!-- ============ COMPUTER BOOKING ============ -->
+  <div class="panel" id="panel-computer" data-name="Library Computer Booking Form">
+    <h2 class="form-title">Library Computer Booking Form</h2>
+    <form>
+      <div class="two-col">
+        <div class="field">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" required>
+        </div>
+        <div class="field">
+          <label>Library Card Number</label>
+          <input type="text">
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="field">
+          <label>Date Required</label>
+          <input type="date">
+        </div>
+        <div class="field">
+          <label>Time Required</label>
+          <input type="time">
+        </div>
+      </div>
+      <div class="field">
+        <label>How long do you need the computer for?</label>
+        <select>
+          <option value="">-- Select --</option>
+          <option>30 minutes</option>
+          <option>1 hour</option>
+          <option>2 hours</option>
+        </select>
+      </div>
+      <fieldset>
+        <legend>Reason for Booking</legend>
+        <div class="radio-row"><input type="radio" name="compreason" id="cr1"><label for="cr1">Job search / applications</label></div>
+        <div class="radio-row"><input type="radio" name="compreason" id="cr2"><label for="cr2">Study / assignment</label></div>
+        <div class="radio-row"><input type="radio" name="compreason" id="cr3"><label for="cr3">Printing / scanning</label></div>
+        <div class="radio-row"><input type="radio" name="compreason" id="cr4"><label for="cr4">Other</label></div>
+      </fieldset>
+      <div class="field">
+        <label>Do you need any special assistance? (e.g. screen reader, large print)</label>
+        <textarea></textarea>
+      </div>
+    </form>
+    <div class="action-bar"></div>
+  </div>
+
+  <!-- ============ FESTIVAL OF LIGHTS ============ -->
+  <div class="panel" id="panel-festival" data-name="Festival of Lights Free Ticket Booking">
+    <h2 class="form-title">Festival of Lights &ndash; Free Ticket Booking</h2>
+    <form>
+      <div class="two-col">
+        <div class="field">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" required>
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email">
+        </div>
+      </div>
+      <div class="field">
+        <label>Phone Number</label>
+        <input type="tel">
+      </div>
+      <fieldset>
+        <legend>Number of Tickets</legend>
+        <div class="two-col">
+          <div class="field">
+            <label>Adults (16+)</label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" data-target="fest-adult" data-step="-1">&minus;</button>
+              <input type="number" id="fest-adult" min="0" max="6" value="1" readonly>
+              <button type="button" class="stepper-btn" data-target="fest-adult" data-step="1">+</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Children (under 16)</label>
+            <div class="stepper">
+              <button type="button" class="stepper-btn" data-target="fest-child" data-step="-1">&minus;</button>
+              <input type="number" id="fest-child" min="0" max="6" value="0" readonly>
+              <button type="button" class="stepper-btn" data-target="fest-child" data-step="1">+</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Preferred Session</legend>
+        <div class="radio-row"><input type="radio" name="festsession" id="fs1"><label for="fs1">Friday evening, 6&ndash;9pm</label></div>
+        <div class="radio-row"><input type="radio" name="festsession" id="fs2"><label for="fs2">Saturday evening, 6&ndash;9pm</label></div>
+        <div class="radio-row"><input type="radio" name="festsession" id="fs3"><label for="fs3">Sunday evening, 6&ndash;9pm</label></div>
+      </fieldset>
+      <div class="field">
+        <label>Any accessibility requirements?</label>
+        <textarea></textarea>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="festnews">
+        <label for="festnews">Send me updates about future free community events</label>
+      </div>
+    </form>
+    <div class="action-bar"></div>
+  </div>
+
+  <!-- ============ SURVEY ============ -->
+  <div class="panel" id="panel-survey" data-name="English Class Feedback Survey">
+    <h2 class="form-title">English Class Feedback Survey</h2>
+    <form>
+      <div class="field">
+        <label>Your Name (optional)</label>
+        <input type="text">
+      </div>
+      <fieldset>
+        <legend>Please rate the following (1 = Strongly Disagree, 5 = Strongly Agree)</legend>
+        <table class="scale-table">
+          <tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+          <tr>
+            <td>The lessons were well organised</td>
+            <td><input type="radio" name="q1" value="1"></td>
+            <td><input type="radio" name="q1" value="2"></td>
+            <td><input type="radio" name="q1" value="3"></td>
+            <td><input type="radio" name="q1" value="4"></td>
+            <td><input type="radio" name="q1" value="5"></td>
+          </tr>
+          <tr>
+            <td>The teacher explained things clearly</td>
+            <td><input type="radio" name="q2" value="1"></td>
+            <td><input type="radio" name="q2" value="2"></td>
+            <td><input type="radio" name="q2" value="3"></td>
+            <td><input type="radio" name="q2" value="4"></td>
+            <td><input type="radio" name="q2" value="5"></td>
+          </tr>
+          <tr>
+            <td>I had enough opportunity to practise speaking</td>
+            <td><input type="radio" name="q3" value="1"></td>
+            <td><input type="radio" name="q3" value="2"></td>
+            <td><input type="radio" name="q3" value="3"></td>
+            <td><input type="radio" name="q3" value="4"></td>
+            <td><input type="radio" name="q3" value="5"></td>
+          </tr>
+          <tr>
+            <td>The pace of the class was appropriate</td>
+            <td><input type="radio" name="q4" value="1"></td>
+            <td><input type="radio" name="q4" value="2"></td>
+            <td><input type="radio" name="q4" value="3"></td>
+            <td><input type="radio" name="q4" value="4"></td>
+            <td><input type="radio" name="q4" value="5"></td>
+          </tr>
+          <tr>
+            <td>I would recommend this class to others</td>
+            <td><input type="radio" name="q5" value="1"></td>
+            <td><input type="radio" name="q5" value="2"></td>
+            <td><input type="radio" name="q5" value="3"></td>
+            <td><input type="radio" name="q5" value="4"></td>
+            <td><input type="radio" name="q5" value="5"></td>
+          </tr>
+        </table>
+      </fieldset>
+      <div class="field">
+        <label>What did you enjoy most about the class?</label>
+        <textarea></textarea>
+      </div>
+      <div class="field">
+        <label>What could be improved?</label>
+        <textarea></textarea>
+      </div>
+    </form>
+    <div class="action-bar"></div>
+  </div>
+
+</div>
+
+<script>
+  // ---- Tab switching ----
+  const tabButtons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---- Build the action bar (print + email) for every panel ----
+  panels.forEach((panel, index) => {
+    const bar = panel.querySelector('.action-bar');
+    const formName = panel.dataset.name;
+    const uid = 'form' + index;
+
+    bar.innerHTML = `
+      <hr class="section-divider">
+      <div class="email-row">
+        <input type="email" id="${uid}-email" placeholder="Teacher's email address">
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-print" data-panel="${panel.id}">1. Save as PDF</button>
+        <button type="button" class="btn btn-email" data-panel="${panel.id}" data-uid="${uid}" data-name="${formName}">2. Email Teacher</button>
+      </div>
+      <p class="note">
+        Please print or "Save as PDF" this form first, then attach that file to the email that opens before you send it.
+      </p>
+    `;
+  });
+
+  // ---- Stepper +/- buttons (Festival of Lights ticket counts) ----
+  document.querySelectorAll('.stepper-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      const step = parseInt(btn.dataset.step, 10);
+      const min = parseInt(input.min, 10);
+      const max = parseInt(input.max, 10);
+      let val = parseInt(input.value, 10) + step;
+      if (val < min) val = min;
+      if (val > max) val = max;
+      input.value = val;
+    });
+  });
+
+  // ---- Print only the active panel ----
+  document.querySelectorAll('.btn-print').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panel = document.getElementById(btn.dataset.panel);
+      panels.forEach(p => p.classList.remove('printing'));
+      panel.classList.add('printing');
+      window.print();
+    });
+  });
+  window.addEventListener('afterprint', () => {
+    panels.forEach(p => p.classList.remove('printing'));
+  });
+
+  // ---- Email button: build a mailto link that opens Outlook ----
+  document.querySelectorAll('.btn-email').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const uid = btn.dataset.uid;
+      const emailField = document.getElementById(uid + '-email');
+      const address = emailField.value.trim();
+
+      if (!address || !address.includes('@')) {
+        alert("Please type your teacher's email address first.");
+        emailField.focus();
+        return;
+      }
+
+      const subject = encodeURIComponent(btn.dataset.name);
+      const body = encodeURIComponent(
+        "Hi, see attached form for you to look at.\n\nRegards, "
+      );
+
+      window.location.href = `mailto:${address}?subject=${subject}&body=${body}`;
+    });
+  });
+</script>
+
+</body>
+</html>

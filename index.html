@@ -225,12 +225,16 @@
     font-weight:600;
     cursor:pointer;
   }
-  .btn-print{
+  .btn-pdf{
     background:var(--navy);
     color:#fff;
   }
-  .btn-print:hover{
+  .btn-pdf:hover{
     background:var(--navy-dark);
+  }
+  .btn-pdf:disabled{
+    opacity:0.6;
+    cursor:wait;
   }
   .btn-email{
     background:var(--accent);
@@ -253,21 +257,19 @@
   .required{
     color:#b23b3b;
   }
-
-  /* PRINT RULES: only the currently active panel prints, cleanly */
-  @media print{
-    body{background:#fff;padding:0;}
-    .tabs, .action-bar, h1, p.subtitle{display:none !important;}
-    .wrap{max-width:100%;}
-    .panel{display:none !important;border:none;padding:0;}
-    .panel.printing{display:block !important;}
+  .pdf-marked{
+    background:#e3ede8;
+    border-radius:4px;
+    outline:2px solid var(--accent);
+    font-weight:700;
   }
+
 </style>
 </head>
 <body>
 
 <h1>Form Filling Practice</h1>
-<p class="subtitle">Complete each form as instructed by your teacher, then print it or email it in.</p>
+<p class="subtitle">Complete each form as instructed by your teacher, then download it as a PDF or email it in.</p>
 
 <div class="wrap">
 
@@ -586,6 +588,7 @@
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
   // ---- Tab switching ----
   const tabButtons = document.querySelectorAll('.tab-btn');
@@ -612,11 +615,11 @@
         <input type="email" id="${uid}-email" placeholder="Teacher's email address">
       </div>
       <div class="btn-row">
-        <button type="button" class="btn btn-print" data-panel="${panel.id}">1. Save as PDF</button>
+        <button type="button" class="btn btn-pdf" data-panel="${panel.id}" data-name="${formName}">1. Download as PDF</button>
         <button type="button" class="btn btn-email" data-panel="${panel.id}" data-uid="${uid}" data-name="${formName}">2. Email Teacher</button>
       </div>
       <p class="note">
-        Please print or "Save as PDF" this form first, then attach that file to the email that opens before you send it.
+        "Download as PDF" saves this form straight to your downloads folder — no print dialog. Then attach that downloaded file to the email that opens before you send it.
       </p>
     `;
   });
@@ -635,17 +638,59 @@
     });
   });
 
-  // ---- Print only the active panel ----
-  document.querySelectorAll('.btn-print').forEach(btn => {
+  // ---- Mark checked radios/checkboxes so their selection is visible in the PDF ----
+  // (html2canvas can render native checkbox/radio controls inconsistently, so we
+  // highlight the row behind any checked option before capturing.)
+  function markCheckedRows(panel) {
+    const marked = [];
+    panel.querySelectorAll('input[type=checkbox]:checked, input[type=radio]:checked').forEach(input => {
+      const row = input.closest('.radio-row, .checkbox-row') || input.parentElement;
+      if (row) {
+        row.classList.add('pdf-marked');
+        marked.push(row);
+      }
+    });
+    return marked;
+  }
+  function unmarkRows(rows) {
+    rows.forEach(row => row.classList.remove('pdf-marked'));
+  }
+
+  // ---- Download the active panel's form as a real PDF file ----
+  document.querySelectorAll('.btn-pdf').forEach(btn => {
     btn.addEventListener('click', () => {
       const panel = document.getElementById(btn.dataset.panel);
-      panels.forEach(p => p.classList.remove('printing'));
-      panel.classList.add('printing');
-      window.print();
+      const bar = panel.querySelector('.action-bar');
+      const formName = btn.dataset.name || 'form';
+      const filename = formName.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '_') + '.pdf';
+
+      const markedRows = markCheckedRows(panel);
+      bar.style.display = 'none'; // keep the email box/buttons out of the PDF
+
+      const originalLabel = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Generating PDF…';
+
+      const opt = {
+        margin: 12,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(panel).save()
+        .catch(err => {
+          console.error('PDF generation failed:', err);
+          alert('Sorry, the PDF could not be generated. Please try again.');
+        })
+        .finally(() => {
+          bar.style.display = '';
+          unmarkRows(markedRows);
+          btn.disabled = false;
+          btn.textContent = originalLabel;
+        });
     });
-  });
-  window.addEventListener('afterprint', () => {
-    panels.forEach(p => p.classList.remove('printing'));
   });
 
   // ---- Email button: build a mailto link that opens Outlook ----

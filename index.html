@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Form Filling Practice</title>
 <style>
   :root{
@@ -57,6 +58,22 @@
     font-weight:600;
     color:var(--navy-dark);
     text-align:center;
+    -webkit-tap-highlight-color:transparent;
+  }
+  @media (max-width:640px){
+    .tabs{
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
+      padding-bottom:2px;
+    }
+    .tab-btn{
+      flex:0 0 auto;
+      min-width:auto;
+      white-space:nowrap;
+      padding:12px 14px;
+    }
   }
   .tab-btn.active{
     background:var(--paper);
@@ -106,7 +123,7 @@
     padding:9px 10px;
     border:1px solid var(--border);
     border-radius:6px;
-    font-size:14px;
+    font-size:16px;
     font-family:inherit;
     background:#fbfcfd;
   }
@@ -263,7 +280,46 @@
     outline:2px solid var(--accent);
     font-weight:700;
   }
+  .table-scroll{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
 
+  @media (max-width:600px){
+    body{ padding:12px; }
+    h1{ font-size:22px; }
+    .panel{ padding:16px; }
+    .radio-row, .checkbox-row{
+      gap:10px;
+      margin:10px 0;
+    }
+    .radio-row input[type=radio],
+    .checkbox-row input[type=checkbox]{
+      width:20px;
+      height:20px;
+      flex:0 0 auto;
+    }
+    .stepper-btn{
+      width:40px;
+      height:40px;
+      font-size:20px;
+    }
+    .stepper input[type=number]{
+      height:40px;
+      width:44px;
+    }
+    .scale-table{
+      min-width:420px;
+      font-size:12px;
+    }
+    .btn{
+      flex:1 1 auto;
+      padding:12px 16px;
+    }
+    .email-row input{
+      flex:1 1 100%;
+    }
+  }
 </style>
 </head>
 <body>
@@ -530,6 +586,7 @@
       </div>
       <fieldset>
         <legend>Please rate the following (1 = Strongly Disagree, 5 = Strongly Agree)</legend>
+        <div class="table-scroll">
         <table class="scale-table">
           <tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
           <tr>
@@ -573,6 +630,7 @@
             <td><input type="radio" name="q5" value="5"></td>
           </tr>
         </table>
+        </div>
       </fieldset>
       <div class="field">
         <label>What did you enjoy most about the class?</label>
